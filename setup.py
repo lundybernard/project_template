@@ -15,6 +15,9 @@ from project._version import __version__
 #    long_description = f.read()
 long_description = 'WRITE ME!'
 
+with open('requirements.txt') as f:
+    requirements = f.read().splitlines()
+
 
 setup(
     # Application name:
@@ -53,8 +56,5 @@ setup(
     long_description=long_description,
 
     # Dependent packages (distributions)
-    install_requires=[
-        'flask',
-        'requests',
-    ],
+    install_requires=requirements,
 )
