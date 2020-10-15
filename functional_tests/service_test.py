@@ -1,7 +1,7 @@
 from unittest import TestCase
 
-#PT_SVC_ADDR = 'http://0.0.0.0:5000/'
-PT_SVC_ADDR = 'http://127.0.0.1/project'
+PT_SVC_ADDR = 'http://0.0.0.0:5000/'
+#PT_SVC_ADDR = 'http://127.0.0.1/project'
 
 from project.tests.common_api_tests import CommonAPITest
 
