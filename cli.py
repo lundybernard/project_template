@@ -33,6 +33,18 @@ class ProjectCLI(object):
             dest='loglevel',
             const=logging.DEBUG,
         )
+        p.add_argument(
+            '-c', '--conf', '--config_file',
+            dest='config_file',
+            default=None,
+            help='specify a config file to get environment details from',
+        )
+        p.add_argument(
+            '-e', '--env', '--remote_environment',
+            dest='remote_environment',
+            default=None,
+            help='specify the remote environment to use fromthe config file',
+        )
 
         # Add a subparser to handle sub-commands
         commands = p.add_subparsers(
