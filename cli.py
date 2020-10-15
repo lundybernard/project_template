@@ -2,46 +2,9 @@ import argparse
 import logging
 from logging.config import dictConfig
 
+from logconf import logging_config
+
 from project.lib import hello_world
-
-
-# === LOGGING === #
-logging_config = dict(
-    version=1,
-    formatters={
-        'f': {'format':
-              '%(asctime)s %(name)-12s %(levelname)-8s %(message)s'},
-        'thread_formatter': {
-            'format':
-            '%(asctime)s %(threadName)-12s %(levelname)-8s %(message)s'
-        }
-    },
-    handlers={
-        'h': {
-            'class': 'logging.StreamHandler',
-            'formatter': 'f'
-        },
-        'thread_handler': {
-            'class': 'logging.StreamHandler',
-            'formatter': 'thread_formatter'
-        }
-    },
-    loggers={
-        'root': {
-            'handlers': ['h'],
-            'level': logging.DEBUG
-        },
-        'mod': {
-            'handlers': ['h'],
-            'level': logging.DEBUG
-        },
-        'thread': {
-            'handlers': ['thread_handler'],
-            'level': logging.DEBUG
-        }
-    }
-)
-
 
 dictConfig(logging_config)
 log = logging.getLogger('root')
@@ -51,8 +14,8 @@ class ProjectCLI(object):
 
     def __init__(self):
         p = argparse.ArgumentParser(
-            description='Utility for executing various pytorch_server tasks',
-            usage='pytorch_server [<args>] <command>'
+            description='Utility for executing various project_server tasks',
+            usage='project_server [<args>] <command>'
         )
         p.set_defaults(func=p.print_help)
 
