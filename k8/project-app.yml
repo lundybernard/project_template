@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: project-app
+  labels:
+    app: project-app
+    tier: backend
+    version: v1
+spec:
+  selector:
+    matchLabels:
+      app: project-app
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: project-app
+    spec:
+      containers:
+      - name: project-app
+        image: localhost:5001/project-app
+        ports:
+        - containerPort: 8080
+        env:
+        - name: APP_NAME
+          value: PROJECT
