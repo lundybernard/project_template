@@ -11,5 +11,6 @@ class CommonAPITest(object):
     '''
 
     def test_compose_webservice_exists(self):
-        out = requests.get(self.service_address)
+        print('connect to service at %s' % self.service_address)
+        out = requests.get(self.service_address, verify=False)
         self.assertEqual(out.text, 'Hello World!')

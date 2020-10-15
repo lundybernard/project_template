@@ -1,6 +1,7 @@
-FROM python:3.4-alpine
+FROM python:3.6-alpine
 ADD . /opt/project
 WORKDIR /opt/project
+
 RUN pip install -r requirements.txt
 
 # install the module
