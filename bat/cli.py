@@ -2,20 +2,20 @@ import argparse
 import logging
 from logging.config import dictConfig
 
-from project.logconf import logging_config
+from bat.logconf import logging_config
 
-from project.lib import hello_world
+from bat.lib import hello_world
 
 dictConfig(logging_config)
 log = logging.getLogger('root')
 
 
-class ProjectCLI(object):
+class BATCLI(object):
 
     def __init__(self):
         p = argparse.ArgumentParser(
-            description='Utility for executing various project_server tasks',
-            usage='project_server [<args>] <command>'
+            description='Utility for executing various bat tasks',
+            usage='bat [<args>] <command>'
         )
         p.set_defaults(func=p.print_help)
 
@@ -170,7 +170,7 @@ class ProjectCLI(object):
             log.setLevel(logging.ERROR)
 
     def start(self, args):
-        from project.server import start_server
+        from bat.server import start_server
         start_server(host=args.host, port=args.port, debug=args.debug)
 
     def test(self, args):
@@ -186,7 +186,7 @@ class ProjectCLI(object):
         import os
         import signal
         from time import sleep
-        a = subprocess.Popen(['project', 'start'])
+        a = subprocess.Popen(['bat', 'start'])
         sleep(0.5)
         self.test(args)
 

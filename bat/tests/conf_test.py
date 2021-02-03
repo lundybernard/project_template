@@ -1,9 +1,9 @@
 from unittest import TestCase, mock
 
-from project.conf import get_config
+from bat.conf import get_config
 
 
-SRC = 'project.conf'
+SRC = 'bat.conf'
 
 
 class TestConfiguration(TestCase):

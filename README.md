@@ -1,4 +1,4 @@
-# project template
+# BAT Project Template
 example python microservice project
 
 [![Build Status](https://travis-ci.org/lundybernard/project_template.svg?branch=master)](https://travis-ci.org/lundybernard/project_template)
@@ -16,7 +16,7 @@ python setup.py develop
 start the web server on local host
 
 ```
-project start
+bat start
 ```
 
 run tests against the web server
@@ -37,13 +37,13 @@ python setup.py develop
 start webserver with cli
 
 ```
-project start
+bat start
 ```
 
 Run functional tests
 
 ```
-project test service
+bat test service
 pytest functional_tests/service_test.py
 ```
 
@@ -72,7 +72,7 @@ pytest container_tests/container_test.py
 CLI
 
 ```
-project run_container_tests
+bat run_container_tests
 ```
 
 
@@ -98,15 +98,15 @@ docker run -p 5001:5001 registry
 
 3. Tag and Push the image to your docker registry
 ```
-docker build -t project-app ./
-docker tag project-app localhost:5001/project-app
-docker push localhost:5001/project-app
+docker build -t bat-app ./
+docker tag bat localhost:5001/bat-app
+docker push localhost:5001/bat-app
 ```
 
 4. Run the application and ingress
 ```
 microk8s.kubectl apply -f k8/ingress.yml
-microk8s.kubectl apply -f k8/project-app-deployment.yml
+microk8s.kubectl apply -f k8/bat-app-deployment.yml
 ```
 
 5. enable ingress
@@ -120,10 +120,10 @@ microk8s.kubectl get all -A
 
 6. expose the application
 ```
-microk8s.kubectl expose deployment project-app --type=LoadBalancer --port=8080
+microk8s.kubectl expose deployment bat-app --type=LoadBalancer --port=8080
 ```
 
 7. test the endpoint
 ```
-curl -kL https://127.0.0.1/project-app
+curl -kL https://127.0.0.1/bat-app
 ```

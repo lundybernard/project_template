@@ -1,10 +1,10 @@
 from unittest import TestCase
 
-from project.lib import hello_world
+from bat.lib import hello_world
 
 
-class ProjectTests(TestCase):
+class LibTests(TestCase):
 
-    def test_project(t):
+    def test_hello_world(t):
         ret = hello_world()
         t.assertEqual(ret, 'Hello World!')

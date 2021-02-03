@@ -1,6 +1,6 @@
 from flask import Flask
 
-from project.lib import hello_world
+from bat.lib import hello_world
 
 app = Flask(__name__)
 

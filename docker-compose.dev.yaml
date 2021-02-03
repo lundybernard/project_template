@@ -5,4 +5,4 @@ services:
     ports:
       - "5000:5000"
     volumes:
-      - ./:/opt/project  # Override /opt/project with local dir in dev
+      - ./:/opt/bat  # Override /opt/project with local dir in dev
