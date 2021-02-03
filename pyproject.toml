@@ -1,0 +1,12 @@
+# pyproject.toml
+
+[tool.pytest.ini_options]
+addopts = "--cov=project --cov-report html --cov-fail-under=100"
+
+[tool.coverage.run]
+omit = [
+    # ignore coverage for these files
+    "project/_version.py",
+    "project/server.py",
+    "project/tests/common_api_tests.py",
+]
