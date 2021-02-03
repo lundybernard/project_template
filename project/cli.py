@@ -2,7 +2,7 @@ import argparse
 import logging
 from logging.config import dictConfig
 
-from logconf import logging_config
+from project.logconf import logging_config
 
 from project.lib import hello_world
 

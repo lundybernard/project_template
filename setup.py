@@ -39,7 +39,7 @@ setup(
     # entry points, to generate executables in python/bin/
     entry_points={
         "console_scripts":
-            ['project = cli:ProjectCLI']
+            ['project = project.cli:ProjectCLI']
     },
 
     # Include additional files into the package
