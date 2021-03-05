@@ -1,20 +1,32 @@
-import os
-import yaml
+from bat import GlobalConfig
+
+from .configuration.manager import Configuration, dataclass
+
+from .configuration.source import SourceList
+from .configuration.sources.args import CliArgsConfig, Namespace
+from .configuration.sources.env import EnvConfig
+from .configuration.sources.file import FileConfig
+from .configuration.sources.dataclass import DataclassConfig
 
 
-def get_config(config_file=None):
-    if config_file:
-        CONF_PATH = config_file
-    elif usr_conf := os.environ.get('PROJECT_CONFIG', default=None):
-        CONF_PATH = usr_conf
-    else:
-        raise Exception(
-            "Config File not specified:"
-            " set environment variable PROJECT_CONFIG to config file path,"
-            " or speicfy a config file."
-        )
+def get_config(
+    config_class: dataclass = GlobalConfig,
+    cli_args: Namespace = None,
+    config_file: FileConfig = None,
+    config_file_name: str = None,
+    config_env: str = None,
+) -> Configuration:
 
-    with open(CONF_PATH) as env_file:
-        CONF = yaml.load(env_file, Loader=yaml.BaseLoader)
+    # Build a prioritized config source list
+    config_sources = [
+        CliArgsConfig(cli_args) if cli_args else None,
+        EnvConfig(),
+        config_file if config_file else FileConfig(
+            config_file_name, config_env=config_env
+        ),
+        DataclassConfig(config_class),
+    ]
 
-    return CONF
+    source_list = config_sources = SourceList(config_sources)
+
+    return Configuration(source_list, config_class)
