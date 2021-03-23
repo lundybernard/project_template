@@ -179,8 +179,8 @@ class Commands:
 
     @staticmethod
     def start(args):
-        from bat.server import start_server
-        start_server(host=args.host, port=args.port, debug=args.debug)
+        from bat.server import start_api_server
+        start_api_server(host=args.host, port=args.port, debug=args.debug)
 
     @staticmethod
     def test(args):

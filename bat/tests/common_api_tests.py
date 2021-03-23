@@ -10,7 +10,9 @@ class CommonAPITest(object):
     and as local service.
     '''
 
-    def test_compose_webservice_exists(self):
-        print('connect to service at %s' % self.service_address)
-        out = requests.get(self.service_address, verify=False)
-        self.assertEqual(out.text, 'Hello World!')
+    def test_api_hello_world(self):
+        print('test_api_hello_world')
+        url = f'{self.service_address}hello_world'
+        print(f'connect to service at {url}')
+        out = requests.get(url, verify=False)
+        self.assertEqual(out.text, '"Hello World!"\n')
