@@ -35,6 +35,18 @@ class TestBATCLI(TestCase):
         set_log_level.assert_called_with(argparser().parse_args(args))
         t.exit.assert_called_with(0)
 
+    @patch(f'{SRC}.argparser', autospec=True, wraps=argparser)
+    def test_missing_command(t, argparser):
+        '''prints help if no arguments are given
+        '''
+        parser = argparser.return_value
+        args = parser.parse_args.return_value
+        args.loglevel = 0
+        args.func.__name__ = 'missingno'
+        ARGS = []
+        BATCLI(ARGS)
+        parser.print_help.assert_called_with()
+
     def test_commands(t):
         commands = [
             'hello',
