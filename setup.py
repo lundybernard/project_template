@@ -35,6 +35,9 @@ setup(
     # Packages
     #packages=["pytorch_server"],
     packages=find_packages(),
+    package_data={'': ['*.yaml'], },
+    include_package_data=True,
+    zip_safe=False,
 
     # entry points, to generate executables in python/bin/
     entry_points={
