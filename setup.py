@@ -1,4 +1,8 @@
-"""A setuptools based setup module.
+"""
+DEPRECATED.
+this file only exists to make `pip install -e` work for now
+
+A setuptools based setup module.
 See:
 https://packaging.python.org/en/latest/distributing.html
 https://github.com/pypa/sampleproject
@@ -11,9 +15,10 @@ from setuptools import setup, find_packages
 from bat._version import __version__
 
 # Get the long description from the relevant file
-#with open('DESCRIPTION.rst') as f:
-#    long_description = f.read()
-long_description = 'WRITE ME!'
+long_description = '''
+Deprecated install method.
+this file only exists to make `pip install -e` work for now
+'''
 
 with open('requirements.txt') as f:
     requirements = f.read().splitlines()
@@ -33,7 +38,6 @@ setup(
     license='MIT',
 
     # Packages
-    #packages=["pytorch_server"],
     packages=find_packages(),
     package_data={'': ['*.yaml'], },
     include_package_data=True,
@@ -45,16 +49,7 @@ setup(
             ['bat = bat.cli:BATCLI']
     },
 
-    # Include additional files into the package
-    # WARNING not a distutils option
-    #include_package_data=True,
-
-    # Details
-    url="none exists yet",
-
-    #
-    # license="LICENSE.txt",
-    description="utilities for automating project tasks",
+    description="Developer Install Method",
 
     long_description=long_description,
 
