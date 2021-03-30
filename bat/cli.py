@@ -3,9 +3,10 @@ import logging
 from logging.config import dictConfig
 from sys import exit
 
+from bat.example.cli import example_cli
 from bat.logconf import logging_config
-
 from bat.lib import hello_world
+
 
 dictConfig(logging_config)
 log = logging.getLogger('root')
@@ -28,7 +29,7 @@ def BATCLI(ARGS=None):
 def argparser():
     p = argparse.ArgumentParser(
         description='Utility for executing various bat tasks',
-        usage='bat [<args>] <command>'
+        usage='bat [<args>] <command>',
     )
     p.set_defaults(func=p.print_help)
 
@@ -56,14 +57,15 @@ def argparser():
         '-e', '--env', '--remote_environment',
         dest='remote_environment',
         default=None,
-        help='specify the remote environment to use fromthe config file',
+        help='specify the remote environment to use from the config file',
     )
 
     # Add a subparser to handle sub-commands
     commands = p.add_subparsers(
         dest='command',
         title='commands',
-        description='valid commands',
+        description='for additonal details on each command use: '
+                    '"bat {command name} --help"',
     )
     # hello args
     hello = commands.add_parser(
@@ -73,49 +75,63 @@ def argparser():
     )
     hello.set_defaults(func=Commands.hello)
 
-    # start args
-    start = commands.add_parser(
-        'start',
-        description='start the web server',
-        help='for details use start --help',
+    server_cli(commands)
+    testing_cli(commands)
+    # Add a subparser from a module
+    example_cli(commands)
+
+    return p
+
+
+# TODO: Convert this into a ArgumentParser object, and make them composable
+def server_cli(subparser):
+    server = subparser.add_parser(
+        'server',
+        usage='bat server [args] <command>',
+        help='http server related commands',
+        description='http server related commands',
     )
-    start.set_defaults(func=Commands.start)
-    start.add_argument(
+
+    server.add_argument(
         '-H', '--host', dest='host',
         default='0.0.0.0',
         help='host ip on which the service will be made available',
     )
-    start.add_argument(
+    server.add_argument(
         '-P', '--port', dest='port',
         default='5000',
         help='port on which the service will be made available'
     )
-    start.add_argument(
+    server.add_argument(
         '-d', '--debug', dest='debug',
         default=True,
         help='run web service with debug level output'
     )
 
-    # test args
-    test = commands.add_parser(
+    server_cmds = server.add_subparsers(
+        dest='server_cmds',
+        title='server commands',
+        help='server control commands',
+    )
+    # start args
+    start = server_cmds.add_parser(
+        'start',
+        description='start the web server',
+        help='for details use start --help',
+    )
+    start.set_defaults(func=Commands.server_start)
+
+    test = server_cmds.add_parser(
         'test',
         description='run functional tests',
         help='for details use test --help'
     )
-    test.set_defaults(func=Commands.test)
-    test.add_argument(
-        '-H', '--host', dest='host',
-        default='0.0.0.0',
-        help='host ip on which the service is running',
-    )
-    test.add_argument(
-        '-P', '--port', dest='port',
-        default='5000',
-        help='port on which the service is running'
-    )
+    test.set_defaults(func=Commands.server_test)
 
+
+def testing_cli(subparser):
     # run_functional_tests args
-    run_functional_tests = commands.add_parser(
+    run_functional_tests = subparser.add_parser(
         'run_functional_tests',
         description='start the server locally and run functional tests',
         help='for details use test --help'
@@ -133,7 +149,7 @@ def argparser():
     )
 
     # run_functional_tests args
-    run_container_tests = commands.add_parser(
+    run_container_tests = subparser.add_parser(
         'run_container_tests',
         description='start docker-compose and run functional tests',
         help='for details use test --help'
@@ -150,25 +166,12 @@ def argparser():
         help='port on which the service service will be run'
     )
 
-    # example sub command
-    sub1 = commands.add_parser(
-        'sub1',
-        description='execute command sub1',
-        help='for details use sub1 --help'
-    )
-    sub1.set_defaults(func=Commands.sub1)
-
-    sub1.add_argument(
-        '-a', '--argument',
-        dest='argument',
-        default=None,
-        help='tell me what arg1 does',
-    )
-
-    return p
-
 
 class Commands:
+
+    @staticmethod
+    def hello(args):
+        print(hello_world())
 
     @staticmethod
     def set_log_level(args):
@@ -178,12 +181,12 @@ class Commands:
             log.setLevel(logging.ERROR)
 
     @staticmethod
-    def start(args):
+    def server_start(args):
         from bat.server import start_api_server
         start_api_server(host=args.host, port=args.port, debug=args.debug)
 
     @staticmethod
-    def test(args):
+    def server_test(args):
         print('++ run functional tests ++')
         import unittest
         loader = unittest.TestLoader()
@@ -215,11 +218,3 @@ class Commands:
 
         os.kill(a.pid, signal.SIGTERM)
         sleep(0.5)
-
-    @staticmethod
-    def hello(args):
-        print(hello_world())
-
-    @staticmethod
-    def sub1(args):
-        print('sub1 example command')

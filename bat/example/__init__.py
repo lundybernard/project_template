@@ -1,3 +1,6 @@
+'''Example Module
+'''
+
 from dataclasses import dataclass
 
 

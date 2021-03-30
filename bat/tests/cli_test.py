@@ -28,6 +28,17 @@ class TestBATCLI(TestCase):
             setattr(t, target, patcher.start())
             t.addCleanup(patcher.stop)
 
+    def validate_commands(t, commands):
+        for cmd in commands:
+            with t.subTest(cmd):
+                func = '_'.join(cmd.split())
+                with patch(f'{SRC}.Commands.{func}', autospec=True) as m_cmd:
+                    m_cmd.__name__ = func
+                    args = cmd.split()
+                    BATCLI(args)
+                    m_cmd.assert_called_with(argparser().parse_args(args))
+                    t.exit.assert_called_with(0)
+
     @patch(f'{SRC}.Commands.set_log_level', autospec=True)
     def test_set_log_level(t, set_log_level):
         args = ['--debug', 'hello', ]
@@ -50,20 +61,15 @@ class TestBATCLI(TestCase):
     def test_commands(t):
         commands = [
             'hello',
-            'start',
-            'test',
             'run_functional_tests',
             'run_container_tests',
         ]
 
-        for cmd in commands:
-            with t.subTest(cmd):
-                with patch(f'{SRC}.Commands.{cmd}', autospec=True) as m_cmd:
-                    m_cmd.__name__ = cmd
-                    args = [cmd, ]
-                    BATCLI(args)
-                    m_cmd.assert_called_with(argparser().parse_args(args))
-                    t.exit.assert_called_with(0)
+        t.validate_commands(commands)
+
+    def test_server_cli(t):
+        commands = ['server start', 'server test', ]
+        t.validate_commands(commands)
 
     # TODO: full coverage of CLI arguments that trigger commands
 
