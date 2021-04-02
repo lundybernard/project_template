@@ -1,5 +1,5 @@
 from unittest import TestCase
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 
 from ..cli import (
     argparser,
@@ -46,17 +46,44 @@ class TestBATCLI(TestCase):
         set_log_level.assert_called_with(argparser().parse_args(args))
         t.exit.assert_called_with(0)
 
-    @patch(f'{SRC}.argparser', autospec=True, wraps=argparser)
+    @patch(f'{SRC}.argparser', wraps=argparser)
     def test_missing_command(t, argparser):
         '''prints help if no arguments are given
         '''
-        parser = argparser.return_value
-        args = parser.parse_args.return_value
-        args.loglevel = 0
-        args.func.__name__ = 'missingno'
+        # first get the actual parsed args
         ARGS = []
+        parser = argparser()
+        parser.print_help = Mock(wraps=parser.print_help)
+        args = parser.parse_args(ARGS)
+
+        # calling return_value makes argparser return a mock
+        m_parser = argparser.return_value
+        # make the return value from the mock the real args object
+        m_parser.parse_args.return_value = args
+
         BATCLI(ARGS)
         parser.print_help.assert_called_with()
+
+    @patch('builtins.print')
+    @patch(f'{SRC}.argparser', wraps=argparser)
+    def test_command_error(t, argparser, print):
+        '''prints the error message, and help if a command throws an error
+        '''
+        exc = Exception()
+
+        def fail(args):
+            raise exc
+
+        ARGS = []
+        parser = argparser()
+        args = parser.parse_args(ARGS)
+        args.func = fail
+        m_parser = argparser.return_value
+        m_parser.parse_args.return_value = args
+
+        BATCLI(ARGS)
+        print.assert_called_with(exc)
+        m_parser.print_help.assert_called_with()
 
     def test_commands(t):
         commands = [
@@ -65,10 +92,6 @@ class TestBATCLI(TestCase):
             'run_container_tests',
         ]
 
-        t.validate_commands(commands)
-
-    def test_server_cli(t):
-        commands = ['server start', 'server test', ]
         t.validate_commands(commands)
 
     # TODO: full coverage of CLI arguments that trigger commands

@@ -3,6 +3,7 @@ import logging
 from logging.config import dictConfig
 from sys import exit
 
+from bat.server import server_parser
 from bat.example.cli import example_cli
 from bat.logconf import logging_config
 from bat.lib import hello_world
@@ -16,14 +17,28 @@ def BATCLI(ARGS=None):
     p = argparser()
     # Execute
     # get only the first command in args
-    args = p.parse_args(ARGS)
+    args = p.parse_args(ARGS, NestedNameSpace())
     Commands.set_log_level(args)
     # execute function set for parsed command
-    if not hasattr(Commands, args.func.__name__):
+#    if not hasattr(Commands, args.func.__name__):
+    try:
+        args.func(args)
+    except Exception as exp:
+        print(exp)
         p.print_help()
         exit(1)
-    args.func(args)
     exit(0)
+
+
+class NestedNameSpace(argparse.Namespace):
+    def __setattr__(self, name, value):
+        if '.' in name:
+            group, name = name.split('.', 1)
+            ns = getattr(self, group, NestedNameSpace())
+            setattr(ns, name, value)
+            self.__dict__[group] = ns
+        else:
+            self.__dict__[name] = value
 
 
 def argparser():
@@ -31,7 +46,7 @@ def argparser():
         description='Utility for executing various bat tasks',
         usage='bat [<args>] <command>',
     )
-    p.set_defaults(func=p.print_help)
+    p.set_defaults(func=get_help(p))
 
     p.add_argument(
         '-v', '--verbose',
@@ -75,58 +90,29 @@ def argparser():
     )
     hello.set_defaults(func=Commands.hello)
 
-    server_cli(commands)
-    testing_cli(commands)
+    commands.add_parser(
+        'server',
+        help='http server related commands',
+        add_help=False,
+        parents=[server_parser()],
+    )
     # Add a subparser from a module
-    example_cli(commands)
+    commands.add_parser(
+        'example',
+        help='example module commands',
+        add_help=False,
+        parents=[example_cli()],
+    )
+
+    testing_cli(commands)
 
     return p
 
 
-# TODO: Convert this into a ArgumentParser object, and make them composable
-def server_cli(subparser):
-    server = subparser.add_parser(
-        'server',
-        usage='bat server [args] <command>',
-        help='http server related commands',
-        description='http server related commands',
-    )
-
-    server.add_argument(
-        '-H', '--host', dest='host',
-        default='0.0.0.0',
-        help='host ip on which the service will be made available',
-    )
-    server.add_argument(
-        '-P', '--port', dest='port',
-        default='5000',
-        help='port on which the service will be made available'
-    )
-    server.add_argument(
-        '-d', '--debug', dest='debug',
-        default=True,
-        help='run web service with debug level output'
-    )
-
-    server_cmds = server.add_subparsers(
-        dest='server_cmds',
-        title='server commands',
-        help='server control commands',
-    )
-    # start args
-    start = server_cmds.add_parser(
-        'start',
-        description='start the web server',
-        help='for details use start --help',
-    )
-    start.set_defaults(func=Commands.server_start)
-
-    test = server_cmds.add_parser(
-        'test',
-        description='run functional tests',
-        help='for details use test --help'
-    )
-    test.set_defaults(func=Commands.server_test)
+def get_help(parser):
+    def help(args):
+        parser.print_help()
+    return help
 
 
 def testing_cli(subparser):
@@ -179,20 +165,6 @@ class Commands:
             log.setLevel(args.loglevel)
         else:
             log.setLevel(logging.ERROR)
-
-    @staticmethod
-    def server_start(args):
-        from bat.server import start_api_server
-        start_api_server(host=args.host, port=args.port, debug=args.debug)
-
-    @staticmethod
-    def server_test(args):
-        print('++ run functional tests ++')
-        import unittest
-        loader = unittest.TestLoader()
-        suite = loader.discover('functional_tests', pattern='*_test.py')
-        runner = unittest.TextTestRunner()
-        runner.run(suite)
 
     @staticmethod
     def run_functional_tests(args):
