@@ -8,6 +8,7 @@ from ..file import (
     yaml,
     os,
     Path,
+    _missing_config_warning,
 )
 
 
@@ -176,10 +177,12 @@ class Test_load_config_file(TestCase):
         )
 
     @patch.dict(f'{SRC}.os.environ', {}, clear=True)
+    @patch(f'{SRC}.log', autospec=True)
     @patch(f'{SRC}.Path.is_file', autospec=True)
-    def test_config_missing_file(t, path_is_file):
+    def test_config_missing_file(t, path_is_file, log):
         '''PROJECT_CONFIG is not set
         '''
         path_is_file.return_value = False
-        with t.assertRaises(Exception):
-            load_config_file()
+        conf = load_config_file()
+        log.warn.assert_called_with(_missing_config_warning)
+        t.assertEqual(conf['default'], 'none')

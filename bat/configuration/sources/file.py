@@ -1,3 +1,5 @@
+import logging as log
+
 import os
 import yaml
 from pathlib import Path
@@ -46,13 +48,23 @@ def load_config_file(config_file=None):
     elif (conf_path := Path(os.getcwd() + '/config.yaml')).is_file():
         CONF_PATH = conf_path  # dont leave a dirty CONF_PATH variable
     else:
-        raise Exception(
+        log.warn(
             "Config File not specified:"
+            " create config.yaml,"
             " set environment variable PROJECT_CONFIG to config file path,"
             " or speicfy a config file."
         )
+        return {'default': 'none', 'none': 'empty'}
 
     with open(CONF_PATH) as env_file:
         CONF = yaml.load(env_file, Loader=yaml.BaseLoader)
 
     return CONF
+
+
+_missing_config_warning = (
+    "Config File not specified:"
+    " create config.yaml,"
+    " set environment variable PROJECT_CONFIG to config file path,"
+    " or speicfy a config file."
+)
