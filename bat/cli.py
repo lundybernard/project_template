@@ -3,6 +3,8 @@ import logging
 from logging.config import dictConfig
 from sys import exit
 
+from bat.conf import get_config
+
 from bat.server import server_parser
 from bat.example.cli import example_cli
 from bat.logconf import logging_config
@@ -18,11 +20,16 @@ def BATCLI(ARGS=None):
     # Execute
     # get only the first command in args
     args = p.parse_args(ARGS, NestedNameSpace())
+    conf = get_config(
+        cli_args=args,
+        config_file=args.config_file,
+        config_env=args.config_env,
+    )
     Commands.set_log_level(args)
     # execute function set for parsed command
 #    if not hasattr(Commands, args.func.__name__):
     try:
-        args.func(args)
+        args.func(conf)
     except Exception as exp:
         print(exp)
         p.print_help()
@@ -66,11 +73,12 @@ def argparser():
         '-c', '--conf', '--config_file',
         dest='config_file',
         default=None,
-        help='specify a config file to get environment details from',
+        help='specify a config file to get environment details from.'
+             ' default=./config.yaml',
     )
     p.add_argument(
-        '-e', '--env', '--remote_environment',
-        dest='remote_environment',
+        '-e', '--env', '--config_environment',
+        dest='config_env',
         default=None,
         help='specify the remote environment to use from the config file',
     )
@@ -156,37 +164,46 @@ def testing_cli(subparser):
 class Commands:
 
     @staticmethod
-    def hello(args):
+    def hello(conf):
         print(hello_world())
 
     @staticmethod
-    def set_log_level(args):
-        if args.loglevel:
-            log.setLevel(args.loglevel)
+    def set_log_level(conf):
+        if conf.loglevel:
+            log.setLevel(conf.loglevel)
         else:
             log.setLevel(logging.ERROR)
 
     @staticmethod
-    def run_functional_tests(args):
+    def run_functional_tests(conf):
         import subprocess
         import os
         import signal
         from time import sleep
         a = subprocess.Popen(['bat', 'start'])
         sleep(0.5)
-        Commands.test(args)
+        Commands.test(conf)
 
         os.kill(a.pid, signal.SIGTERM)
 
     @staticmethod
-    def run_container_tests(args):
+    def run_container_tests(conf):
         import subprocess
         import os
         import signal
         from time import sleep
         a = subprocess.Popen(['docker-compose', 'up'])
         sleep(0.5)
-        Commands.test(args)
+        Commands.test(conf)
 
         os.kill(a.pid, signal.SIGTERM)
         sleep(0.5)
+
+    @staticmethod
+    def test(conf):
+        print('++ run functional tests ++')
+        import unittest
+        loader = unittest.TestLoader()
+        suite = loader.discover('functional_tests', pattern='*_test.py')
+        runner = unittest.TextTestRunner()
+        runner.run(suite)

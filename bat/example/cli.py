@@ -3,7 +3,7 @@ import textwrap
 
 
 def get_help(parser):
-    def help(args):
+    def help(conf):
         parser.print_help()
     return help
 
@@ -31,7 +31,7 @@ def example_cli():
 
     # Add additional sub-commands to this cli
     commands = example.add_subparsers(
-        dest='example_cmds',
+        dest='example.cmds',
         title='example commands',
         description='for additonal details on each command use: '
         '"bat example x {command name} --help"',
@@ -47,9 +47,10 @@ def example_cli():
     return example
 
 
-def default(args):
+def default(conf):
     print('default response from example module CLI')
+    print(f'conf={conf}')
 
 
-def hello_world(args):
+def hello_world(conf):
     print('Hello from the example module!')

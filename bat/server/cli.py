@@ -49,17 +49,17 @@ def server_parser():
 
 
 def get_help(parser):
-    def help(args):
+    def help(conf):
         parser.print_help()
     return help
 
 
-def start(args):
+def start(conf):
     from .server import start_api_server
     start_api_server(
-        host=args.server.host,
-        port=args.server.port,
-        debug=args.server.debug,
+        host=conf.server.host,
+        port=conf.server.port,
+        debug=conf.server.debug,
     )
 
 
