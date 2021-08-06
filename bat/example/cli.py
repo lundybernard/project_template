@@ -1,9 +1,11 @@
 import argparse
 import textwrap
+from bat.configuration.manager import Configuration
+from typing import Callable
 
 
-def get_help(parser):
-    def help(conf):
+def get_help(parser: argparse.ArgumentParser) -> Callable[[Configuration], None]:
+    def help(conf: Configuration) -> None:
         parser.print_help()
     return help
 
@@ -47,10 +49,10 @@ def example_cli():
     return example
 
 
-def default(conf):
+def default(conf: Configuration) -> None:
     print('default response from example module CLI')
     print(f'conf={conf}')
 
 
-def hello_world(conf):
+def hello_world(conf: Configuration) -> None:
     print('Hello from the example module!')
