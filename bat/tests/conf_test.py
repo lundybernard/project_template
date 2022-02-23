@@ -1,12 +1,13 @@
 from unittest import TestCase
 from unittest.mock import patch
 
+from dataclasses import dataclass
+
 import yaml
 
 from ..conf import (
     get_config,
     Namespace,
-    dataclass,
 )
 
 
