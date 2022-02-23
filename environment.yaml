@@ -1,0 +1,6 @@
+name: project_template
+dependencies:
+  - python=3.10
+  - poetry=1.1.13
+  - cachecontrol=0.12.9
+
