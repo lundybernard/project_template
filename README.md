@@ -10,6 +10,12 @@ install in developer mode from source
 python setup.py develop
 ```
 
+### Install latest batconf from github branch
+
+```
+pip install git+ssh://git@github.com/lundybernard/batconf.git@main
+```
+
 ## Run Functional tests
 
 ### Manually

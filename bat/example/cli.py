@@ -1,7 +1,8 @@
 import argparse
 import textwrap
-from bat.configuration.manager import Configuration
 from typing import Callable
+
+from batconf.manager import Configuration
 
 
 def get_help(parser: argparse.ArgumentParser) -> Callable[[Configuration], None]:

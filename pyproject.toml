@@ -18,6 +18,7 @@ bat = 'bat.cli:BATCLI'
 
 [tool.poetry.dependencies]
 python = '^3.8'
+batconf = '*'
 flask = '*'
 connexion = '*'
 requests = '*'
