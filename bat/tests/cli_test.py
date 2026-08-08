@@ -14,13 +14,13 @@ from ..cli import (
 SRC = 'bat.cli'
 
 
-class TestArgparser(TestCase):
+class ArgparserTests(TestCase):
 
     def test_argparser(t):
         argparser()
 
 
-class TestBATCLI(TestCase):
+class BATCLITests(TestCase):
 
     def setUp(t):
         patches = ['exit', 'get_config', ]
@@ -99,7 +99,7 @@ class TestBATCLI(TestCase):
     # TODO: full coverage of CLI arguments that trigger commands
 
 
-class TestNestedNameSpace(TestCase):
+class NestedNameSpaceTests(TestCase):
 
     def test_nesting(t):
         nns = NestedNameSpace()
@@ -112,7 +112,7 @@ class TestNestedNameSpace(TestCase):
         t.assertEqual(nns.bat.sub.var, 'sub_var')
 
 
-class TestCommands(TestCase):
+class CommandsTests(TestCase):
 
     @patch(f'{SRC}.log', autospec=True)
     def test_set_log_level(t, log):

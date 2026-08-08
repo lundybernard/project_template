@@ -6,7 +6,7 @@ PT_SVC_ADDR = 'http://0.0.0.0:5000/'
 from bat.tests.common_api_tests import CommonAPITest
 
 
-class ServiceFunctionalTest(TestCase, CommonAPITest):
+class ServiceFunctionalTests(TestCase, CommonAPITest):
 
     def setUp(self):
         self.service_address = PT_SVC_ADDR
