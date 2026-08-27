@@ -32,7 +32,7 @@ alt:
 EXAMPLE_CONFIG_DICT = yaml.load(EXAMPLE_CONFIG_YAML, Loader=yaml.BaseLoader)
 
 
-class Test_get_config(TestCase):
+class GetConfigTests(TestCase):
 
     def setUp(t):
         patches = ['FileConfig', ]

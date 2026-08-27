@@ -36,6 +36,6 @@ addopts = "--cov=bat --cov-report html --cov-fail-under=100"
 omit = [
     # ignore coverage for these files
     "bat/_version.py",
-    "bat/server.py",
+    "bat/server/server.py",
     "bat/tests/common_api_tests.py",
 ]

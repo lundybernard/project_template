@@ -14,13 +14,13 @@ from ..cli import (
 SRC = 'bat.cli'
 
 
-class TestArgparser(TestCase):
+class ArgparserTests(TestCase):
 
     def test_argparser(t):
         argparser()
 
 
-class TestBATCLI(TestCase):
+class BATCLITests(TestCase):
 
     def setUp(t):
         patches = ['exit', 'get_config', ]
@@ -55,44 +55,37 @@ class TestBATCLI(TestCase):
         set_log_level.assert_called_with(argparser().parse_args(args))
         t.exit.assert_called_with(0)
 
-    @patch(f'{SRC}.argparser', wraps=argparser)
-    def test_missing_command(t, argparser):
+    def test_missing_command(t):
         '''prints help if no arguments are given
         '''
-        # first get the actual parsed args
-        ARGS = []
+        # a real parser, so func defaults to the real help closure
         parser = argparser()
         parser.print_help = Mock(wraps=parser.print_help)
-        args = parser.parse_args(ARGS)
 
-        # calling return_value makes argparser return a mock
-        m_parser = argparser.return_value
-        # make the return value from the mock the real args object
-        m_parser.parse_args.return_value = args
+        with patch(f'{SRC}.argparser', return_value=parser):
+            BATCLI([])
 
-        BATCLI(ARGS)
         parser.print_help.assert_called_with()
 
     @patch('builtins.print')
-    @patch(f'{SRC}.argparser', wraps=argparser)
-    def test_command_error(t, argparser, print):
+    def test_command_error(t, print):
         '''prints the error message, and help if a command throws an error
         '''
         exc = Exception()
 
-        def fail(args):
+        def fail(conf):
             raise exc
 
-        ARGS = []
-        parser = argparser()
-        args = parser.parse_args(ARGS)
+        args = argparser().parse_args([])
         args.func = fail
-        m_parser = argparser.return_value
-        m_parser.parse_args.return_value = args
+        parser = Mock(argparse.ArgumentParser)
+        parser.parse_args.return_value = args
 
-        BATCLI(ARGS)
+        with patch(f'{SRC}.argparser', return_value=parser):
+            BATCLI([])
+
         print.assert_called_with(exc)
-        m_parser.print_help.assert_called_with()
+        parser.print_help.assert_called_with()
 
     def test_commands(t):
         commands = [
@@ -106,7 +99,7 @@ class TestBATCLI(TestCase):
     # TODO: full coverage of CLI arguments that trigger commands
 
 
-class TestNestedNameSpace(TestCase):
+class NestedNameSpaceTests(TestCase):
 
     def test_nesting(t):
         nns = NestedNameSpace()
@@ -119,7 +112,7 @@ class TestNestedNameSpace(TestCase):
         t.assertEqual(nns.bat.sub.var, 'sub_var')
 
 
-class TestCommands(TestCase):
+class CommandsTests(TestCase):
 
     @patch(f'{SRC}.log', autospec=True)
     def test_set_log_level(t, log):

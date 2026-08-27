@@ -10,7 +10,7 @@ from ..cli import (
 SRC = 'bat.server.cli'
 
 
-class Test_server_parser(TestCase):
+class ServerParserTests(TestCase):
 
     def test_server_parser(t):
         server_parser()

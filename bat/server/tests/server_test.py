@@ -11,7 +11,7 @@ from ..server import (
 SRC = 'bat.server.server'
 
 
-class TestFlaskApp(TestCase):
+class FlaskAppTests(TestCase):
 
     def test_get_root(t):
         client = app.test_client()
@@ -24,7 +24,7 @@ class TestFlaskApp(TestCase):
         )
 
 
-class TestServer(TestCase):
+class ServerTests(TestCase):
 
     @patch(f'{SRC}.app', autospec=True)
     def test_start_server(t, app):
